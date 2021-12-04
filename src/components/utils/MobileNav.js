@@ -3,9 +3,30 @@ import { IconButton } from "@chakra-ui/button";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/layout";
 import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
+import { useToast } from "@chakra-ui/toast";
 import { FiBell, FiChevronDown, FiMenu } from "react-icons/fi";
+import { useHistory } from "react-router";
+import Api from "../../Api";
+import CreateToast from "./CreateToast";
 
 const MobileNav = ({ onOpen, ...rest }) => {
+	const toast = useToast();
+	const history = useHistory();
+	const userToken = localStorage.getItem("user_token");
+
+	const postLogout = async () => {
+		CreateToast(toast, "info", "loading..");
+		const result = await Api.postLogout(userToken);
+		if (result.success) {
+			toast.closeAll();
+			localStorage.removeItem("user_token");
+			history.push({
+				pathname: "/login",
+				state: { logoutMessage: result.message },
+			});
+		}
+	};
+
 	return (
 		<Flex
 			ml={{ base: 0, md: 60 }}
@@ -76,7 +97,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
 							bg={useColorModeValue("white", "gray.900")}
 							borderColor={useColorModeValue("gray.200", "gray.700")}
 						>
-							<MenuItem>Sign out</MenuItem>
+							<MenuItem onClick={() => postLogout()}>Sign out</MenuItem>
 						</MenuList>
 					</Menu>
 				</Flex>

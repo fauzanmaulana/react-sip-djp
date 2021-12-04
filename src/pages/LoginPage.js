@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Flex,
 	Heading,
@@ -8,30 +8,52 @@ import {
 	FormControl,
 	FormLabel,
 	Input,
-	Checkbox,
-	Link,
 	Button,
+	useToast,
 } from "@chakra-ui/react";
 import { useHistory } from "react-router";
+import Api from "../Api";
+import CreateToast from "../components/utils/CreateToast";
+import { NavLink } from "react-router-dom";
 
 const LoginPage = () => {
 	const history = useHistory();
+	const [loading, setLoading] = useState(false);
+	const toast = useToast();
 
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+	const postLogin = async (e) => {
+		e.preventDefault();
 
-	const login = () => {
-		console.log("email : ", email);
-		console.log("password : ", password);
+		const formData = new FormData(e.target);
 
-		// window.alert(`your login as ${email}`);
+		setLoading(true);
 
-		history.push("/dashboard");
+		try {
+			const result = await Api.postLogin(formData);
+
+			if (!result.success) {
+				setLoading(false);
+				CreateToast(toast, "warning", result.message);
+			} else {
+				localStorage.setItem("user_token", result.data.token);
+				CreateToast(toast, "success", result.message);
+				history.push("/dashboard");
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	};
+
+	useEffect(() => {
+		if (history.location.state && history.location.state.logoutMessage) {
+			CreateToast(toast, "success", history.location.state.logoutMessage);
+			history.replace();
+		}
+	});
 
 	return (
 		<Flex align={"center"} justify={"center"} bg={"gray.50"} minH={"100vh"}>
-			<Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+			<Stack spacing={6} mx={"auto"} maxW={"lg"} py={12} px={6}>
 				<Stack align={"center"}>
 					<Heading>Sistem Informasi Penjualan</Heading>
 					<Text fontSize={"lg"} color={"gray.600"}>
@@ -40,35 +62,36 @@ const LoginPage = () => {
 				</Stack>
 
 				<Box bg={"white"} p={8} rounded={"lg"} boxShadow={"md"}>
-					<Stack spacing={4}>
-						<FormControl>
-							<FormLabel>Email</FormLabel>
-							<Input type="email" onChange={(e) => setEmail(e.target.value)} />
-						</FormControl>
-						<FormControl>
-							<FormLabel>Password</FormLabel>
-							<Input
-								type="password"
-								onChange={(e) => setPassword(e.target.value)}
-							/>
-						</FormControl>
-						<Stack spacing={10}>
-							<Flex justify={"space-between"}>
-								<Checkbox>Remember me</Checkbox>
-								<Link color={"blue.400"}>Forgot password?</Link>
-							</Flex>
+					<form id="login-form" onSubmit={(e) => postLogin(e)}>
+						<Stack spacing={5}>
+							<FormControl>
+								<FormLabel>Email</FormLabel>
+								<Input type="email" name="email" required />
+							</FormControl>
+							<FormControl>
+								<FormLabel>Password</FormLabel>
+								<Input type="password" name="password" required />
+							</FormControl>
 							<Button
+								isLoading={loading}
 								bg={"blue.400"}
 								color={"white"}
 								_hover={{
 									bg: "blue.500",
 								}}
-								onClick={() => login()}
+								type="submit"
+								form="login-form"
 							>
 								Sign in
 							</Button>
+							<Flex justifyContent="space-between">
+								<Text>Don't Have an Account ?</Text>
+								<NavLink to="/register" style={{ color: "blue" }}>
+									Register Now
+								</NavLink>
+							</Flex>
 						</Stack>
-					</Stack>
+					</form>
 				</Box>
 			</Stack>
 		</Flex>

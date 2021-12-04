@@ -8,11 +8,19 @@ import {
 } from "@chakra-ui/react";
 import Sidebar from "../components/utils/Sidebar";
 import MobileNav from "../components/utils/MobileNav";
-import { Route, Switch } from "react-router";
+import { Route, Switch, useHistory } from "react-router";
 import DashboardPageRoute from "../routes/DashboardPageRoute";
 
 const Dashboard = () => {
+	const userToken = localStorage.getItem("user_token");
+
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const history = useHistory();
+
+	if (!userToken) {
+		history.push("/login");
+	}
+
 	return (
 		<>
 			<Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
