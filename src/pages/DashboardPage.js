@@ -9,7 +9,7 @@ import {
 import Sidebar from "../components/utils/Sidebar";
 import MobileNav from "../components/utils/MobileNav";
 import { Route, Switch } from "react-router";
-import DashboardPage from "../routes/DashboardPage";
+import DashboardPageRoute from "../routes/DashboardPageRoute";
 
 const Dashboard = () => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
@@ -41,8 +41,8 @@ const Dashboard = () => {
 				<Box ml={{ base: 0, md: 60 }} p="7">
 					{/* routes */}
 					<Switch>
-						<Route path="/dashboard/:data" component={DashboardPage} />
-						<Route component={DashboardPage} />
+						<Route path="/dashboard/:data" component={DashboardPageRoute} />
+						<Route component={DashboardPageRoute} />
 					</Switch>
 				</Box>
 			</Box>

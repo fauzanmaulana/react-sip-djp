@@ -4,7 +4,7 @@ import { CategoryRoute } from "../modules/category/CategoryRoute";
 import DashboardRoute from "../modules/dashboard/DashboardRoute";
 import ProductRoute from "../modules/product/ProductRoute";
 
-const DashboardPage = () => {
+const DashboardPageRoute = () => {
 	const params = useParams().data;
 
 	switch (params) {
@@ -19,4 +19,4 @@ const DashboardPage = () => {
 	}
 };
 
-export default DashboardPage;
+export default DashboardPageRoute;
