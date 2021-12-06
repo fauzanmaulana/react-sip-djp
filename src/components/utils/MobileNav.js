@@ -3,29 +3,13 @@ import { IconButton } from "@chakra-ui/button";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/layout";
 import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
-import { useToast } from "@chakra-ui/toast";
-import { FiBell, FiChevronDown, FiMenu } from "react-icons/fi";
-import { useHistory } from "react-router";
-import Api from "../../Api";
-import CreateToast from "./CreateToast";
+import { Skeleton } from "@chakra-ui/skeleton";
+import { useContext } from "react";
+import { FiChevronDown, FiMenu } from "react-icons/fi";
+import { AuthContext } from "../../modules/auth/AuthContext";
 
 const MobileNav = ({ onOpen, ...rest }) => {
-	const toast = useToast();
-	const history = useHistory();
-	const userToken = localStorage.getItem("user_token");
-
-	const postLogout = async () => {
-		CreateToast(toast, "info", "loading..");
-		const result = await Api.postLogout(userToken);
-		if (result.success) {
-			toast.closeAll();
-			localStorage.removeItem("user_token");
-			history.push({
-				pathname: "/login",
-				state: { logoutMessage: result.message },
-			});
-		}
-	};
+	const { profile, postLogout } = useContext(AuthContext);
 
 	return (
 		<Flex
@@ -57,12 +41,6 @@ const MobileNav = ({ onOpen, ...rest }) => {
 			</Text>
 
 			<HStack spacing={{ base: "0", md: "6" }}>
-				<IconButton
-					size="lg"
-					variant="ghost"
-					aria-label="open menu"
-					icon={<FiBell />}
-				/>
 				<Flex alignItems={"center"}>
 					<Menu>
 						<MenuButton
@@ -83,7 +61,11 @@ const MobileNav = ({ onOpen, ...rest }) => {
 									spacing="1px"
 									ml="2"
 								>
-									<Text fontSize="sm">Justina Clark</Text>
+									{profile ? (
+										<Text fontSize="sm">{profile.name}</Text>
+									) : (
+										<Skeleton width="90px" height="15px" />
+									)}
 									<Text fontSize="xs" color="gray.600">
 										Admin
 									</Text>

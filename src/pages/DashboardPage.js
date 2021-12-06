@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import {
 	Box,
 	useColorModeValue,
@@ -10,16 +10,26 @@ import Sidebar from "../components/utils/Sidebar";
 import MobileNav from "../components/utils/MobileNav";
 import { Route, Switch, useHistory } from "react-router";
 import DashboardPageRoute from "../routes/DashboardPageRoute";
+import { serviceLocalStorage } from "../Helper";
+import { AuthContext } from "../modules/auth/AuthContext";
 
 const Dashboard = () => {
-	const userToken = localStorage.getItem("user_token");
-
-	const { isOpen, onOpen, onClose } = useDisclosure();
 	const history = useHistory();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
-	if (!userToken) {
-		history.push("/login");
+	const { getProfile } = useContext(AuthContext);
+
+	if (!serviceLocalStorage("user_token")) {
+		history.push("/auth/login");
 	}
+
+	useEffect(() => {
+		if (serviceLocalStorage("user_token")) {
+			getProfile();
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<>

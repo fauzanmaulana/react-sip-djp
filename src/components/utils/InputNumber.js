@@ -7,10 +7,10 @@ import {
 } from "@chakra-ui/number-input";
 import React from "react";
 
-const InputNumber = ({ ...attrs }) => {
+const InputNumber = ({ styles, ...attrs }) => {
 	return (
 		<NumberInput {...attrs}>
-			<NumberInputField />
+			<NumberInputField style={styles} />
 			<NumberInputStepper>
 				<NumberIncrementStepper />
 				<NumberDecrementStepper />

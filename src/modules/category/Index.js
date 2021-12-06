@@ -1,34 +1,33 @@
 import { Button, ButtonGroup } from "@chakra-ui/button";
 import Icon from "@chakra-ui/icon";
-import { Box } from "@chakra-ui/layout";
-import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
-import React, { useEffect, useState } from "react";
-import { FiEdit2, FiPlus, FiTrash2 } from "react-icons/fi";
+import { Badge, Box } from "@chakra-ui/layout";
+import {
+	Table,
+	TableCaption,
+	Tbody,
+	Td,
+	Th,
+	Thead,
+	Tr,
+} from "@chakra-ui/table";
+import React, { useContext, useEffect } from "react";
+import { FiEdit2, FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
+import { useHistory } from "react-router";
 import HeadingDashboard from "../../components/utils/HeadingDashboard";
 import TableSkeleton from "../../components/utils/TableSkeleton";
+import { CategoryContext } from "./CategoryContext";
 
 const Index = () => {
-	// const value = useContext(CategoryContext);
+	const history = useHistory();
 
-	const [categories, setCategories] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const { loading, categories, deleteCategory, getCategories } =
+		useContext(CategoryContext);
 
 	useEffect(() => {
-		getCategories().finally(() => setLoading(false));
-	}, []);
+		getCategories();
 
-	const getCategories = async () => {
-		setLoading(true);
-		try {
-			const response = await fetch(
-				"https://jsonplaceholder.typicode.com/posts"
-			);
-			const result = await response.json();
-			setCategories(result);
-		} catch (error) {
-			console.error(error);
-		}
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	if (loading) {
 		return <TableSkeleton />;
@@ -39,7 +38,7 @@ const Index = () => {
 				<HeadingDashboard
 					title="Categories"
 					button={{
-						title: "Category",
+						title: "Add Category",
 						icon: FiPlus,
 						url: "/dashboard/category/create",
 					}}
@@ -48,6 +47,9 @@ const Index = () => {
 				{/* table */}
 				<Box bg="white" borderRadius="lg" p="5" boxShadow="lg">
 					<Table variant="simple">
+						{categories.length < 1 && (
+							<TableCaption>Data Not Found</TableCaption>
+						)}
 						<Thead>
 							<Tr>
 								<Th>Name</Th>
@@ -57,15 +59,47 @@ const Index = () => {
 						</Thead>
 						<Tbody>
 							{categories.map((category, idx) => (
-								<Tr>
-									<Td>{category.title}</Td>
-									<Td>{category.body}</Td>
+								<Tr key={idx}>
+									<Td>{category.name}</Td>
+									<Td>
+										<Badge
+											borderRadius="lg"
+											paddingEnd="2"
+											paddingStart="2"
+											colorScheme={
+												category.status === "active" ? "green" : "red"
+											}
+										>
+											{category.status}
+										</Badge>
+									</Td>
 									<Td>
 										<ButtonGroup variant="outline">
-											<Button colorScheme="green" size="sm">
+											<Button
+												colorScheme="blue"
+												size="sm"
+												onClick={() => {
+													history.push(`/dashboard/category/${category.id}`);
+												}}
+											>
+												<Icon as={FiEye} />
+											</Button>
+											<Button
+												colorScheme="green"
+												size="sm"
+												onClick={() => {
+													history.push(
+														`/dashboard/category/${category.id}/update`
+													);
+												}}
+											>
 												<Icon as={FiEdit2} />
 											</Button>
-											<Button colorScheme="red" size="sm">
+											<Button
+												colorScheme="red"
+												size="sm"
+												onClick={() => deleteCategory(category.id)}
+											>
 												<Icon as={FiTrash2} />
 											</Button>
 										</ButtonGroup>

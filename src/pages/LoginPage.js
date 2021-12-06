@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import {
 	Flex,
 	Heading,
@@ -12,37 +12,15 @@ import {
 	useToast,
 } from "@chakra-ui/react";
 import { useHistory } from "react-router";
-import Api from "../Api";
-import CreateToast from "../components/utils/CreateToast";
 import { NavLink } from "react-router-dom";
+import CreateToast from "../components/utils/CreateToast";
+import { AuthContext } from "../modules/auth/AuthContext";
 
 const LoginPage = () => {
 	const history = useHistory();
-	const [loading, setLoading] = useState(false);
 	const toast = useToast();
 
-	const postLogin = async (e) => {
-		e.preventDefault();
-
-		const formData = new FormData(e.target);
-
-		setLoading(true);
-
-		try {
-			const result = await Api.postLogin(formData);
-
-			if (!result.success) {
-				setLoading(false);
-				CreateToast(toast, "warning", result.message);
-			} else {
-				localStorage.setItem("user_token", result.data.token);
-				CreateToast(toast, "success", result.message);
-				history.push("/dashboard");
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	};
+	const { loading, postLogin } = useContext(AuthContext);
 
 	useEffect(() => {
 		if (history.location.state && history.location.state.logoutMessage) {
@@ -86,7 +64,7 @@ const LoginPage = () => {
 							</Button>
 							<Flex justifyContent="space-between">
 								<Text>Don't Have an Account ?</Text>
-								<NavLink to="/register" style={{ color: "blue" }}>
+								<NavLink to="/auth/register" style={{ color: "blue" }}>
 									Register Now
 								</NavLink>
 							</Flex>

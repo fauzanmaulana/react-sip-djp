@@ -1,21 +1,28 @@
-import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
 import { Box, VStack } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import HeadingDashboard from "../../components/utils/HeadingDashboard";
+import { useParams } from "react-router";
 import { CategoryContext } from "./CategoryContext";
 
-const Create = () => {
-	const { loading, createCategory } = useContext(CategoryContext);
+const Show = () => {
+	const { id } = useParams();
+
+	const { category, showCategory } = useContext(CategoryContext);
+
+	useEffect(() => {
+		showCategory(id);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<>
 			{/* heading */}
 			<HeadingDashboard
-				title="Create Category"
+				title="Show Category"
 				button={{
 					title: "Back To Categories",
 					icon: FiArrowLeft,
@@ -25,29 +32,35 @@ const Create = () => {
 
 			{/* form */}
 			<Box bg="white" borderRadius="lg" p="5">
-				<form onSubmit={(e) => createCategory(e)}>
+				<form>
 					<VStack spacing="6">
 						<FormControl id="name" isRequired>
 							<FormLabel>Name</FormLabel>
-							<Input placeholder="Name" name="name" required />
+							<Input
+								isDisabled={true}
+								placeholder="Name"
+								name="name"
+								value={category.name}
+								style={{ opacity: "1" }}
+								required
+							/>
 							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
 						</FormControl>
 						<FormControl id="status" isRequired>
 							<FormLabel>Status</FormLabel>
-							<Select placeholder="Choose Status" name="status" required>
+							<Select
+								placeholder="Choose Status"
+								name="status"
+								isDisabled={true}
+								value={category.status}
+								style={{ opacity: "1" }}
+								required
+							>
 								<option value="active">Active</option>
 								<option value="inactive">Inactive</option>
 							</Select>
 							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
 						</FormControl>
-						<Button
-							colorScheme="blue"
-							type="submit"
-							w="100%"
-							isLoading={loading}
-						>
-							Submit
-						</Button>
 					</VStack>
 				</form>
 			</Box>
@@ -55,4 +68,4 @@ const Create = () => {
 	);
 };
 
-export default Create;
+export default Show;

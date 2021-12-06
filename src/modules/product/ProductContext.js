@@ -5,31 +5,40 @@ import Api from "../../Api";
 import CreateToast from "../../components/utils/CreateToast";
 import { serviceLocalStorage } from "../../Helper";
 
-const CategoryContext = createContext();
+const ProductContext = createContext();
 
-const CategoryProvider = ({ children }) => {
+const ProductProvider = ({ children }) => {
 	const toast = useToast();
 
-	// all category state
-	const [categories, setCategories] = useState([]);
+	// all product state
+	const [products, setProducts] = useState([]);
 
-	// show category state
-	const [category, setCategory] = useState({
+	// show product state
+	const [product, setProduct] = useState({
+		id: "",
+		category: {
+			id: "",
+			name: "",
+		},
 		name: "",
+		description: "",
+		price: "",
+		sku: "",
+		image: "",
 		status: "",
 	});
 
 	// loading state
 	const [loading, setLoading] = useState(false);
 
-	const getCategories = async () => {
+	const getProducts = async () => {
 		setLoading(true);
 
 		try {
-			const result = await Api.getCategory(serviceLocalStorage("user_token"));
+			const result = await Api.getProduct(serviceLocalStorage("user_token"));
 
 			if (result.success) {
-				setCategories(result.data);
+				setProducts(result.data);
 			}
 		} catch (error) {
 			console.error(error);
@@ -37,29 +46,29 @@ const CategoryProvider = ({ children }) => {
 		setLoading(false);
 	};
 
-	const showCategory = async (id) => {
+	const showProduct = async (id) => {
 		try {
-			const result = await Api.showCategory(
+			const result = await Api.showProduct(
 				serviceLocalStorage("user_token"),
 				id
 			);
 
 			if (result.success) {
-				setCategory(result.data);
+				setProduct(result.data);
 			}
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
-	const createCategory = async (e) => {
+	const createProduct = async (e) => {
 		e.preventDefault();
 		const formData = new FormData(e.target);
 
 		setLoading(true);
 
 		try {
-			const result = await Api.createCategory(
+			const result = await Api.createProduct(
 				serviceLocalStorage("user_token"),
 				formData
 			);
@@ -75,21 +84,17 @@ const CategoryProvider = ({ children }) => {
 		setLoading(false);
 	};
 
-	const updateCategory = async (e, id) => {
+	const updateProduct = async (e, id) => {
 		e.preventDefault();
 		const formData = new FormData(e.target);
-		const data = {
-			name: formData.get("name"),
-			status: formData.get("status"),
-		};
 
 		setLoading(true);
 
 		try {
-			const result = await Api.updateCategory(
+			const result = await Api.updateProduct(
 				serviceLocalStorage("user_token"),
 				id,
-				new URLSearchParams(data)
+				formData
 			);
 
 			if (result.success) {
@@ -103,34 +108,31 @@ const CategoryProvider = ({ children }) => {
 		setLoading(false);
 	};
 
-	const deleteCategory = async (id) => {
-		setCategories((current) =>
-			current.filter((category) => category.id !== id)
-		);
+	const deleteProduct = async (id) => {
+		setProducts((current) => current.filter((product) => product.id !== id));
 
 		CreateToast(toast, "success", "Delete Data Success");
 
-		await Api.deleteCategory(serviceLocalStorage("user_token"), id);
+		await Api.deleteProduct(serviceLocalStorage("user_token"), id);
 	};
 
 	return (
-		<CategoryContext.Provider
+		<ProductContext.Provider
 			value={{
 				loading,
-				categories,
-				setCategories,
-				category,
-				setCategory,
-				getCategories,
-				showCategory,
-				createCategory,
-				updateCategory,
-				deleteCategory,
+				products,
+				product,
+				setProduct,
+				getProducts,
+				showProduct,
+				createProduct,
+				updateProduct,
+				deleteProduct,
 			}}
 		>
 			{children}
-		</CategoryContext.Provider>
+		</ProductContext.Provider>
 	);
 };
 
-export { CategoryContext, CategoryProvider };
+export { ProductContext, ProductProvider };

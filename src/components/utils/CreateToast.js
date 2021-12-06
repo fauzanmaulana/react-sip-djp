@@ -2,7 +2,7 @@ const CreateToast = (toast, status, message) => {
 	return toast({
 		status,
 		description: message,
-		duration: 9000,
+		duration: 3000,
 		isClosable: true,
 	});
 };
