@@ -4,11 +4,11 @@ import { Box, VStack } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
 import React, { useContext, useEffect } from "react";
 import { FiArrowLeft } from "react-icons/fi";
-import HeadingDashboard from "../../components/utils/HeadingDashboard";
+import HeadingDashboardComponent from "../../components/dashboard/HeadingDashboardComponent";
 import { useParams } from "react-router";
 import { CategoryContext } from "./CategoryContext";
 
-const Show = () => {
+const CategoryShow = () => {
 	const { id } = useParams();
 
 	const { category, showCategory } = useContext(CategoryContext);
@@ -21,7 +21,7 @@ const Show = () => {
 	return (
 		<>
 			{/* heading */}
-			<HeadingDashboard
+			<HeadingDashboardComponent
 				title="Show Category"
 				button={{
 					title: "Back To Categories",
@@ -68,4 +68,4 @@ const Show = () => {
 	);
 };
 
-export default Show;
+export default CategoryShow;

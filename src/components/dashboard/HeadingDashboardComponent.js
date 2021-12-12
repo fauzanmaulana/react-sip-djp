@@ -4,7 +4,7 @@ import { Flex, Heading } from "@chakra-ui/layout";
 import React from "react";
 import { useHistory } from "react-router";
 
-const HeadingDashboard = ({ title, button }) => {
+const HeadingDashboardComponent = ({ title, button }) => {
 	const history = useHistory();
 
 	return (
@@ -13,16 +13,18 @@ const HeadingDashboard = ({ title, button }) => {
 				{title}
 			</Heading>
 
-			<Button
-				colorScheme="blue"
-				size="sm"
-				leftIcon={<Icon as={button.icon} />}
-				onClick={() => history.push(button.url)}
-			>
-				{button.title}
-			</Button>
+			{button && (
+				<Button
+					colorScheme="blue"
+					size="sm"
+					leftIcon={<Icon as={button.icon} />}
+					onClick={() => history.push(button.url)}
+				>
+					{button.title}
+				</Button>
+			)}
 		</Flex>
 	);
 };
 
-export default HeadingDashboard;
+export default HeadingDashboardComponent;

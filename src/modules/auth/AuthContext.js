@@ -3,7 +3,7 @@ import React, { createContext } from "react";
 import { useHistory } from "react-router";
 import { useState } from "react/cjs/react.development";
 import Api from "../../Api";
-import CreateToast from "../../components/utils/CreateToast";
+import { CreateToast } from "../../Helper";
 import { serviceLocalStorage } from "../../Helper";
 
 const AuthContext = createContext();
@@ -14,6 +14,10 @@ const AuthProvider = ({ children }) => {
 
 	const [loading, setLoading] = useState(false);
 	const [profile, setProfile] = useState(null);
+	const [errors, setErrors] = useState({
+		message: "",
+		errors: {},
+	});
 
 	const postLogin = async (e) => {
 		e.preventDefault();
@@ -25,7 +29,7 @@ const AuthProvider = ({ children }) => {
 			const result = await Api.postLogin(formData);
 
 			if (!result.success) {
-				setLoading(false);
+				setErrors(result);
 				CreateToast(toast, "warning", result.message);
 			} else {
 				serviceLocalStorage("user_token", result.data.token);
@@ -35,17 +39,21 @@ const AuthProvider = ({ children }) => {
 		} catch (error) {
 			console.error(error);
 		}
+
+		setLoading(false);
 	};
 
 	const postRegister = async (e) => {
 		e.preventDefault();
 		const formData = new FormData(e.target);
 
+		setLoading(true);
+
 		try {
 			const result = await Api.postRegister(formData);
 
 			if (!result.success) {
-				setLoading(false);
+				setErrors(result);
 				CreateToast(toast, "warning", result.message);
 			} else {
 				serviceLocalStorage("user_token", result.data.token);
@@ -55,6 +63,8 @@ const AuthProvider = ({ children }) => {
 		} catch (error) {
 			console.log(error);
 		}
+
+		setLoading(false);
 	};
 
 	const postLogout = async () => {
@@ -64,7 +74,7 @@ const AuthProvider = ({ children }) => {
 			toast.closeAll();
 			serviceLocalStorage("user_token", "remove");
 			history.push({
-				pathname: "/auth/login",
+				pathname: "/login",
 				state: { logoutMessage: result.message },
 			});
 		}
@@ -77,12 +87,13 @@ const AuthProvider = ({ children }) => {
 			if (result.success) {
 				setProfile(result.data);
 			} else {
-				throw Error("something error");
+				throw Error(result.message);
 			}
 		} catch (error) {
+			// * remove local storage / session storage if token expired
 			serviceLocalStorage("user_token", "remove");
 			history.push({
-				pathname: "/auth/login",
+				pathname: "/login",
 				state: { logoutMessage: "Session has ended" },
 			});
 		}
@@ -93,6 +104,8 @@ const AuthProvider = ({ children }) => {
 			value={{
 				loading,
 				profile,
+				errors,
+				setErrors,
 				postLogin,
 				postRegister,
 				postLogout,

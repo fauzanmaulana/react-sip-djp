@@ -1,9 +1,9 @@
 import React from "react";
 import { Route, Switch } from "react-router";
-import Index from "./Index";
-import Create from "./Create";
-import Show from "./Show";
-import Update from "./Update";
+import ProductIndex from "./ProductIndex";
+import ProductCreate from "./ProductCreate";
+import ProductShow from "./ProductShow";
+import ProductUpdate from "./ProductUpdate";
 import { ProductProvider } from "./ProductContext";
 import { CategoryProvider } from "../category/CategoryContext";
 
@@ -12,10 +12,13 @@ const ProductRoute = () => {
 		<CategoryProvider>
 			<ProductProvider>
 				<Switch>
-					<Route exact path="/dashboard/product" component={Index} />
-					<Route exact path="/dashboard/product/:id" component={Show} />
-					<Route path="/dashboard/product/create" component={Create} />
-					<Route path="/dashboard/product/:id/update" component={Update} />
+					<Route exact path="/dashboard/product" component={ProductIndex} />
+					<Route path="/dashboard/product/create" component={ProductCreate} />
+					<Route exact path="/dashboard/product/:id" component={ProductShow} />
+					<Route
+						path="/dashboard/product/:id/update"
+						component={ProductUpdate}
+					/>
 				</Switch>
 			</ProductProvider>
 		</CategoryProvider>

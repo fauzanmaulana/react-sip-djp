@@ -3,7 +3,7 @@ import { Flex } from "@chakra-ui/layout";
 import React from "react";
 import { Link } from "react-router-dom";
 
-const BasicMenu = ({ title, icon, route }) => {
+const BasicMenuCompoent = ({ title, icon, route }) => {
 	return (
 		<Link to={route} style={{ textDecoration: "none" }}>
 			<Flex
@@ -31,4 +31,4 @@ const BasicMenu = ({ title, icon, route }) => {
 	);
 };
 
-export default BasicMenu;
+export default BasicMenuCompoent;

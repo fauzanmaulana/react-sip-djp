@@ -10,24 +10,33 @@ import {
 	Input,
 	Button,
 	useToast,
+	FormHelperText,
 } from "@chakra-ui/react";
 import { useHistory } from "react-router";
 import { NavLink } from "react-router-dom";
-import CreateToast from "../components/utils/CreateToast";
+import { CreateToast } from "../Helper";
 import { AuthContext } from "../modules/auth/AuthContext";
 
 const LoginPage = () => {
 	const history = useHistory();
 	const toast = useToast();
 
-	const { loading, postLogin } = useContext(AuthContext);
+	const { loading, postLogin, setErrors, errors } = useContext(AuthContext);
 
 	useEffect(() => {
 		if (history.location.state && history.location.state.logoutMessage) {
 			CreateToast(toast, "success", history.location.state.logoutMessage);
 			history.replace();
 		}
-	});
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			setErrors({ message: "", errors: {} });
+		};
+	}, [setErrors]);
 
 	return (
 		<Flex align={"center"} justify={"center"} bg={"gray.50"} minH={"100vh"}>
@@ -44,11 +53,21 @@ const LoginPage = () => {
 						<Stack spacing={5}>
 							<FormControl>
 								<FormLabel>Email</FormLabel>
-								<Input type="email" name="email" required />
+								<Input type="text" name="email" required />
+								{errors.errors.hasOwnProperty("email") && (
+									<FormHelperText color="red">
+										{errors.errors.email[0]}
+									</FormHelperText>
+								)}
 							</FormControl>
 							<FormControl>
 								<FormLabel>Password</FormLabel>
 								<Input type="password" name="password" required />
+								{errors.errors.hasOwnProperty("password") && (
+									<FormHelperText color="red">
+										{errors.errors.password[0]}
+									</FormHelperText>
+								)}
 							</FormControl>
 							<Button
 								isLoading={loading}
@@ -64,7 +83,7 @@ const LoginPage = () => {
 							</Button>
 							<Flex justifyContent="space-between">
 								<Text>Don't Have an Account ?</Text>
-								<NavLink to="/auth/register" style={{ color: "blue" }}>
+								<NavLink to="/register" style={{ color: "blue" }}>
 									Register Now
 								</NavLink>
 							</Flex>

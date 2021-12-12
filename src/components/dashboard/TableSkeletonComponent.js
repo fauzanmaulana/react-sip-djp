@@ -2,7 +2,7 @@ import { Flex, Stack } from "@chakra-ui/layout";
 import { Skeleton } from "@chakra-ui/skeleton";
 import React from "react";
 
-const TableSkeleton = () => {
+const TableSkeletonComponent = () => {
 	return (
 		<Stack spacing="10">
 			<Flex justify="space-between" mb="6">
@@ -19,4 +19,4 @@ const TableSkeleton = () => {
 	);
 };
 
-export default TableSkeleton;
+export default TableSkeletonComponent;

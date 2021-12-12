@@ -18,3 +18,16 @@ export const rupiahFormat = (number) => {
 export const generateSKU = () => {
 	return (Math.random() + 1).toString(32).substring(7);
 };
+
+export const dateFormat = (date) => {
+	return new Date(date).toLocaleDateString("id-ID");
+};
+
+export const CreateToast = (toast, status, message) => {
+	return toast({
+		status,
+		description: message,
+		duration: 3000,
+		isClosable: true,
+	});
+};

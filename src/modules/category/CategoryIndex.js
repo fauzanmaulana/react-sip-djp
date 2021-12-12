@@ -13,11 +13,11 @@ import {
 import React, { useContext, useEffect } from "react";
 import { FiEdit2, FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
 import { useHistory } from "react-router";
-import HeadingDashboard from "../../components/utils/HeadingDashboard";
-import TableSkeleton from "../../components/utils/TableSkeleton";
+import HeadingDashboardComponent from "../../components/dashboard/HeadingDashboardComponent";
+import TableSkeletonComponent from "../../components/dashboard/TableSkeletonComponent";
 import { CategoryContext } from "./CategoryContext";
 
-const Index = () => {
+const CategoryIndex = () => {
 	const history = useHistory();
 
 	const { loading, categories, deleteCategory, getCategories } =
@@ -30,12 +30,12 @@ const Index = () => {
 	}, []);
 
 	if (loading) {
-		return <TableSkeleton />;
+		return <TableSkeletonComponent />;
 	} else {
 		return (
 			<>
 				{/* header */}
-				<HeadingDashboard
+				<HeadingDashboardComponent
 					title="Categories"
 					button={{
 						title: "Add Category",
@@ -114,4 +114,4 @@ const Index = () => {
 	}
 };
 
-export default Index;
+export default CategoryIndex;

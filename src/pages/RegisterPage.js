@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
 	Flex,
 	Heading,
@@ -9,12 +9,19 @@ import {
 	FormLabel,
 	Input,
 	Button,
+	FormHelperText,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../modules/auth/AuthContext";
 
 const RegisterPage = () => {
-	const { loading, postRegister } = useContext(AuthContext);
+	const { loading, errors, setErrors, postRegister } = useContext(AuthContext);
+
+	useEffect(() => {
+		return () => {
+			setErrors({ message: "", errors: {} });
+		};
+	}, [setErrors]);
 
 	return (
 		<Flex align={"center"} justify={"center"} bg={"gray.50"} minH={"100vh"}>
@@ -33,14 +40,29 @@ const RegisterPage = () => {
 								<FormControl>
 									<FormLabel>Name</FormLabel>
 									<Input type="text" name="name" required />
+									{errors.errors.hasOwnProperty("name") && (
+										<FormHelperText color="red">
+											{errors.errors.name[0]}
+										</FormHelperText>
+									)}
 								</FormControl>
 								<FormControl>
 									<FormLabel>Email</FormLabel>
 									<Input type="email" name="email" required />
+									{errors.errors.hasOwnProperty("email") && (
+										<FormHelperText color="red">
+											{errors.errors.email[0]}
+										</FormHelperText>
+									)}
 								</FormControl>
 								<FormControl>
 									<FormLabel>Password</FormLabel>
-									<Input type="password" name="passwprd" required />
+									<Input type="password" name="password" required />
+									{errors.errors.hasOwnProperty("password") && (
+										<FormHelperText color="red">
+											{errors.errors.password[0]}
+										</FormHelperText>
+									)}
 								</FormControl>
 
 								<Button
@@ -57,7 +79,7 @@ const RegisterPage = () => {
 								</Button>
 								<Flex justifyContent="space-between">
 									<Text>Already Have an Account ?</Text>
-									<NavLink to="/auth/login" style={{ color: "blue" }}>
+									<NavLink to="/login" style={{ color: "blue" }}>
 										Login Now
 									</NavLink>
 								</Flex>

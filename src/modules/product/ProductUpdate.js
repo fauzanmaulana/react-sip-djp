@@ -1,23 +1,33 @@
 import { Button } from "@chakra-ui/button";
-import { FormControl, FormLabel } from "@chakra-ui/form-control";
+import {
+	FormControl,
+	FormLabel,
+	FormHelperText,
+} from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
 import { Box, VStack } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { FiArrowLeft } from "react-icons/fi";
-import HeadingDashboard from "../../components/utils/HeadingDashboard";
+import HeadingDashboardComponent from "../../components/dashboard/HeadingDashboardComponent";
 import { useParams } from "react-router";
 import { CategoryContext } from "../category/CategoryContext";
 import { ProductContext } from "./ProductContext";
 import { Textarea } from "@chakra-ui/textarea";
-import InputNumber from "../../components/utils/InputNumber";
-import { generateSKU } from "../../Helper";
+import InputNumber from "../../components/dashboard/InputNumberComponent";
 
-const Update = () => {
+const ProductUpdate = () => {
 	const { id } = useParams();
 
-	const { showProduct, updateProduct, product, setProduct, loading } =
-		useContext(ProductContext);
+	const {
+		showProduct,
+		updateProduct,
+		product,
+		setProduct,
+		loading,
+		errors,
+		setErrors,
+	} = useContext(ProductContext);
 	const { getCategories, categories } = useContext(CategoryContext);
 
 	useEffect(() => {
@@ -25,8 +35,7 @@ const Update = () => {
 		getCategories();
 
 		return () => {
-			setProduct(() => ({
-				id: "",
+			setProduct({
 				category: {
 					id: "",
 					name: "",
@@ -37,7 +46,12 @@ const Update = () => {
 				sku: "",
 				image: "",
 				status: "",
-			}));
+			});
+
+			setErrors({
+				message: "",
+				errors: {},
+			});
 		};
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,7 +60,7 @@ const Update = () => {
 	return (
 		<>
 			{/* heading */}
-			<HeadingDashboard
+			<HeadingDashboardComponent
 				title="Update Product"
 				button={{
 					title: "Back To Products",
@@ -60,7 +74,7 @@ const Update = () => {
 				<form onSubmit={(e) => updateProduct(e, id)}>
 					<VStack spacing="6">
 						{/* category_id */}
-						<FormControl id="category_id" isRequired>
+						<FormControl id="category_id">
 							<FormLabel>Category</FormLabel>
 							<Select
 								placeholder="Choose Category"
@@ -89,11 +103,15 @@ const Update = () => {
 									</option>
 								))}
 							</Select>
-							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+							{errors.errors.hasOwnProperty("category_id") && (
+								<FormHelperText color="red">
+									{errors.errors.category_id[0]}
+								</FormHelperText>
+							)}
 						</FormControl>
 
 						{/* name */}
-						<FormControl id="name" isRequired>
+						<FormControl id="name">
 							<FormLabel>Name</FormLabel>
 							<Input
 								placeholder="name"
@@ -101,11 +119,14 @@ const Update = () => {
 								defaultValue={product.name}
 								style={{ opacity: "1" }}
 							/>
-							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+							{errors.errors.hasOwnProperty("name") && (
+								<FormHelperText color="red">
+									{errors.errors.name[0]}
+								</FormHelperText>
+							)}
 						</FormControl>
 
-						{/* description */}
-						<FormControl id="description" isRequired>
+						<FormControl id="description">
 							<FormLabel>Description</FormLabel>
 							<Textarea
 								placeholder="description"
@@ -113,21 +134,42 @@ const Update = () => {
 								defaultValue={product.description}
 								style={{ opacity: "1" }}
 							/>
-							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+							{errors.errors.hasOwnProperty("description") && (
+								<FormHelperText color="red">
+									{errors.errors.description[0]}
+								</FormHelperText>
+							)}
 						</FormControl>
 
-						{/* description */}
-						<FormControl id="price" isRequired>
+						<FormControl id="price">
 							<FormLabel>Price</FormLabel>
 							<InputNumber
 								styles={{ opacity: "1" }}
 								name="price"
 								value={product.price}
+								onChange={(e) =>
+									setProduct((current) => ({
+										category: {
+											id: current.category.id,
+											name: current.category.name,
+										},
+										name: current.name,
+										description: current.description,
+										price: e.target,
+										sku: current.sku,
+										image: current.image,
+										status: current.status,
+									}))
+								}
 							/>
-							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+							{errors.errors.hasOwnProperty("price") && (
+								<FormHelperText color="red">
+									{errors.errors.price[0]}
+								</FormHelperText>
+							)}
 						</FormControl>
 
-						<FormControl id="sku" isRequired>
+						<FormControl id="sku">
 							<FormLabel>SKU</FormLabel>
 							<Input
 								placeholder="SKU"
@@ -135,7 +177,11 @@ const Update = () => {
 								defaultValue={product.sku}
 								style={{ opacity: "1" }}
 							/>
-							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+							{errors.errors.hasOwnProperty("sku") && (
+								<FormHelperText color="red">
+									{errors.errors.sku[0]}
+								</FormHelperText>
+							)}
 						</FormControl>
 
 						<FormControl id="image">
@@ -146,10 +192,14 @@ const Update = () => {
 								type="file"
 								accept="image/*"
 							/>
-							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+							{errors.errors.hasOwnProperty("image") && (
+								<FormHelperText color="red">
+									{errors.errors.image[0]}
+								</FormHelperText>
+							)}
 						</FormControl>
 
-						<FormControl id="status" isRequired>
+						<FormControl id="status">
 							<FormLabel>Status</FormLabel>
 							<Select
 								placeholder="Choose Status"
@@ -175,7 +225,11 @@ const Update = () => {
 								<option value="active">Active</option>
 								<option value="inactive">Inactive</option>
 							</Select>
-							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+							{errors.errors.hasOwnProperty("status") && (
+								<FormHelperText color="red">
+									{errors.errors.status[0]}
+								</FormHelperText>
+							)}
 						</FormControl>
 
 						<Button
@@ -193,4 +247,4 @@ const Update = () => {
 	);
 };
 
-export default Update;
+export default ProductUpdate;

@@ -2,7 +2,7 @@ import { useToast } from "@chakra-ui/toast";
 import React, { createContext } from "react";
 import { useState } from "react/cjs/react.development";
 import Api from "../../Api";
-import CreateToast from "../../components/utils/CreateToast";
+import { CreateToast } from "../../Helper";
 import { serviceLocalStorage } from "../../Helper";
 
 const ProductContext = createContext();
@@ -12,10 +12,11 @@ const ProductProvider = ({ children }) => {
 
 	// all product state
 	const [products, setProducts] = useState([]);
+	const [filterSearchKeyword, setFilterSearchKeyword] = useState("");
+	const [filterSelectKeyword, setFilterSelectKeyword] = useState("");
 
 	// show product state
 	const [product, setProduct] = useState({
-		id: "",
 		category: {
 			id: "",
 			name: "",
@@ -30,6 +31,12 @@ const ProductProvider = ({ children }) => {
 
 	// loading state
 	const [loading, setLoading] = useState(false);
+
+	// error state
+	const [errors, setErrors] = useState({
+		message: "",
+		errors: {},
+	});
 
 	const getProducts = async () => {
 		setLoading(true);
@@ -47,6 +54,7 @@ const ProductProvider = ({ children }) => {
 	};
 
 	const showProduct = async (id) => {
+		setLoading(true);
 		try {
 			const result = await Api.showProduct(
 				serviceLocalStorage("user_token"),
@@ -59,6 +67,7 @@ const ProductProvider = ({ children }) => {
 		} catch (error) {
 			console.error(error);
 		}
+		setLoading(false);
 	};
 
 	const createProduct = async (e) => {
@@ -75,7 +84,14 @@ const ProductProvider = ({ children }) => {
 
 			if (result.success) {
 				e.target.reset();
+				setErrors({
+					message: "",
+					errors: {},
+				});
 				CreateToast(toast, "success", result.message);
+			} else {
+				setErrors(result);
+				CreateToast(toast, "warning", result.message);
 			}
 		} catch (error) {
 			console.error(error);
@@ -98,8 +114,14 @@ const ProductProvider = ({ children }) => {
 			);
 
 			if (result.success) {
-				e.target.reset();
 				CreateToast(toast, "success", result.message);
+				setErrors({
+					message: "",
+					errors: {},
+				});
+			} else {
+				setErrors(result);
+				CreateToast(toast, "warning", result.message);
 			}
 		} catch (error) {
 			console.error(error);
@@ -116,6 +138,36 @@ const ProductProvider = ({ children }) => {
 		await Api.deleteProduct(serviceLocalStorage("user_token"), id);
 	};
 
+	const filterCategory = (categoryId) => {
+		if (!categoryId) {
+			getProducts();
+		} else {
+			getProducts().then(() => {
+				setProducts((current) =>
+					current.filter(
+						(product) => product.category.id === Number(categoryId)
+					)
+				);
+			});
+		}
+	};
+
+	const filterSearch = (keyword) => {
+		if (!keyword) {
+			getProducts();
+		} else {
+			getProducts().then(() => {
+				setProducts((current) =>
+					current.filter(
+						(product) =>
+							product.name.toLowerCase().includes(keyword) ||
+							product.price.toString().toLowerCase().includes(keyword)
+					)
+				);
+			});
+		}
+	};
+
 	return (
 		<ProductContext.Provider
 			value={{
@@ -123,11 +175,19 @@ const ProductProvider = ({ children }) => {
 				products,
 				product,
 				setProduct,
+				filterSearchKeyword,
+				setFilterSearchKeyword,
+				filterSelectKeyword,
+				setFilterSelectKeyword,
+				errors,
+				setErrors,
 				getProducts,
 				showProduct,
 				createProduct,
 				updateProduct,
 				deleteProduct,
+				filterCategory,
+				filterSearch,
 			}}
 		>
 			{children}

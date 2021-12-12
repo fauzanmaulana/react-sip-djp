@@ -1,19 +1,30 @@
 import { Button } from "@chakra-ui/button";
-import { FormControl, FormLabel } from "@chakra-ui/form-control";
+import {
+	FormControl,
+	FormLabel,
+	FormHelperText,
+} from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
 import { Box, VStack } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/select";
 import React, { useContext, useEffect } from "react";
 import { FiArrowLeft } from "react-icons/fi";
-import HeadingDashboard from "../../components/utils/HeadingDashboard";
+import HeadingDashboardComponent from "../../components/dashboard/HeadingDashboardComponent";
 import { useParams } from "react-router";
 import { CategoryContext } from "./CategoryContext";
 
-const Update = () => {
+const CategoryUpdate = () => {
 	const { id } = useParams();
 
-	const { loading, category, setCategory, showCategory, updateCategory } =
-		useContext(CategoryContext);
+	const {
+		loading,
+		category,
+		setCategory,
+		showCategory,
+		updateCategory,
+		errors,
+		setErrors,
+	} = useContext(CategoryContext);
 
 	useEffect(() => {
 		showCategory(id);
@@ -23,6 +34,11 @@ const Update = () => {
 				name: "",
 				status: "",
 			}));
+
+			setErrors({
+				message: "",
+				errors: {},
+			});
 		};
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -31,7 +47,7 @@ const Update = () => {
 	return (
 		<>
 			{/* heading */}
-			<HeadingDashboard
+			<HeadingDashboardComponent
 				title="Update Category"
 				button={{
 					title: "Back To Categories",
@@ -44,45 +60,51 @@ const Update = () => {
 			<Box bg="white" borderRadius="lg" p="5">
 				<form onSubmit={(e) => updateCategory(e, id)}>
 					<VStack spacing="6">
-						<FormControl id="name" isRequired>
+						<FormControl id="name">
 							<FormLabel>Name</FormLabel>
 							<Input
 								isDisabled={category.name == null}
 								placeholder="Name"
 								name="name"
-								value={category.name === null ? "" : category.name}
+								value={category.name}
 								onChange={(e) =>
 									setCategory((category) => ({
 										name: e.target.value,
 										status: category.status,
 									}))
 								}
-								required
 							/>
-							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+							{errors.errors.hasOwnProperty("name") && (
+								<FormHelperText color="red">
+									{errors.errors.name[0]}
+								</FormHelperText>
+							)}
 						</FormControl>
-						<FormControl id="status" isRequired>
+						<FormControl id="status">
 							<FormLabel>Status</FormLabel>
 							<Select
 								placeholder="Choose Status"
 								name="status"
 								isDisabled={category.status === null}
-								value={category.status === null ? "" : category.status}
+								value={category.status}
 								onChange={(e) =>
 									setCategory((category) => ({
 										name: category.name,
 										status: e.target.value,
 									}))
 								}
-								required
 							>
 								<option value="active">Active</option>
 								<option value="inactive">Inactive</option>
 							</Select>
-							{/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+							{errors.errors.hasOwnProperty("status") && (
+								<FormHelperText color="red">
+									{errors.errors.status[0]}
+								</FormHelperText>
+							)}
 						</FormControl>
 						<Button
-							isDisabled={!category.name && !category.status}
+							isDisabled={loading}
 							colorScheme="blue"
 							type="submit"
 							w="100%"
@@ -97,4 +119,4 @@ const Update = () => {
 	);
 };
 
-export default Update;
+export default CategoryUpdate;

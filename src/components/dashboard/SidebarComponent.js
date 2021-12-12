@@ -2,11 +2,11 @@ import { CloseButton } from "@chakra-ui/close-button";
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import React from "react";
-import { FiHome, FiMenu, FiSettings } from "react-icons/fi";
-import BasicMenu from "../menus/BasicMenu";
-import CollapseMenu from "../menus/CollapseMenu";
+import { FiDollarSign, FiHome, FiMenu, FiSettings } from "react-icons/fi";
+import BasicMenu from "./BasicMenuCompoent";
+import CollapseMenu from "./CollapseMenuComponent";
 
-const Sidebar = ({ onClose, ...rest }) => {
+const SidebarComponent = ({ onClose, ...rest }) => {
 	return (
 		<Box
 			transition="3s ease"
@@ -43,8 +43,10 @@ const Sidebar = ({ onClose, ...rest }) => {
 					},
 				]}
 			/>
+
+			<BasicMenu title="Sales" icon={FiDollarSign} route="/dashboard/sales" />
 		</Box>
 	);
 };
 
-export default Sidebar;
+export default SidebarComponent;

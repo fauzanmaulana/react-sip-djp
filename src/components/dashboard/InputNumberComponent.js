@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/number-input";
 import React from "react";
 
-const InputNumber = ({ styles, ...attrs }) => {
+const InputNumberComponent = ({ styles, ...attrs }) => {
 	return (
 		<NumberInput {...attrs}>
 			<NumberInputField style={styles} />
@@ -19,4 +19,4 @@ const InputNumber = ({ styles, ...attrs }) => {
 	);
 };
 
-export default InputNumber;
+export default InputNumberComponent;

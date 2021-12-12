@@ -10,7 +10,7 @@ import { Box, Flex } from "@chakra-ui/layout";
 import React from "react";
 import { Link } from "react-router-dom";
 
-const CollapseMenu = ({ title, icon, menus }) => {
+const CollapseMenuComponent = ({ title, icon, menus }) => {
 	return (
 		<Accordion allowToggle>
 			<AccordionItem border={0} p="3">
@@ -69,4 +69,4 @@ const CollapseMenu = ({ title, icon, menus }) => {
 	);
 };
 
-export default CollapseMenu;
+export default CollapseMenuComponent;

@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { FiChevronDown, FiMenu } from "react-icons/fi";
 import { AuthContext } from "../../modules/auth/AuthContext";
 
-const MobileNav = ({ onOpen, ...rest }) => {
+const NavbarComponent = ({ onOpen, ...rest }) => {
 	const { profile, postLogout } = useContext(AuthContext);
 
 	return (
@@ -88,4 +88,4 @@ const MobileNav = ({ onOpen, ...rest }) => {
 	);
 };
 
-export default MobileNav;
+export default NavbarComponent;

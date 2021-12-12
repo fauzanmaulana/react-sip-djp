@@ -2,7 +2,7 @@ import { useToast } from "@chakra-ui/toast";
 import React, { createContext } from "react";
 import { useState } from "react/cjs/react.development";
 import Api from "../../Api";
-import CreateToast from "../../components/utils/CreateToast";
+import { CreateToast } from "../../Helper";
 import { serviceLocalStorage } from "../../Helper";
 
 const CategoryContext = createContext();
@@ -22,6 +22,12 @@ const CategoryProvider = ({ children }) => {
 	// loading state
 	const [loading, setLoading] = useState(false);
 
+	// error state
+	const [errors, setErrors] = useState({
+		message: "",
+		errors: {},
+	});
+
 	const getCategories = async () => {
 		setLoading(true);
 
@@ -38,6 +44,7 @@ const CategoryProvider = ({ children }) => {
 	};
 
 	const showCategory = async (id) => {
+		setLoading(true);
 		try {
 			const result = await Api.showCategory(
 				serviceLocalStorage("user_token"),
@@ -50,6 +57,7 @@ const CategoryProvider = ({ children }) => {
 		} catch (error) {
 			console.error(error);
 		}
+		setLoading(false);
 	};
 
 	const createCategory = async (e) => {
@@ -66,7 +74,14 @@ const CategoryProvider = ({ children }) => {
 
 			if (result.success) {
 				e.target.reset();
+				setErrors({
+					message: "",
+					errors: {},
+				});
 				CreateToast(toast, "success", result.message);
+			} else {
+				setErrors(result);
+				CreateToast(toast, "warning", result.message);
 			}
 		} catch (error) {
 			console.error(error);
@@ -93,11 +108,17 @@ const CategoryProvider = ({ children }) => {
 			);
 
 			if (result.success) {
-				e.target.reset();
+				setErrors({
+					message: "",
+					errors: {},
+				});
 				CreateToast(toast, "success", result.message);
+			} else {
+				setErrors(result);
+				CreateToast(toast, "warning", result.message);
 			}
 		} catch (error) {
-			console.error(error);
+			console.log(error);
 		}
 
 		setLoading(false);
@@ -121,6 +142,8 @@ const CategoryProvider = ({ children }) => {
 				setCategories,
 				category,
 				setCategory,
+				errors,
+				setErrors,
 				getCategories,
 				showCategory,
 				createCategory,

@@ -1,6 +1,6 @@
 import { Button, ButtonGroup } from "@chakra-ui/button";
 import Icon from "@chakra-ui/icon";
-import { Box, Stack } from "@chakra-ui/layout";
+import { Box, Stack, Badge } from "@chakra-ui/react";
 import { Image } from "@chakra-ui/react";
 import {
 	Table,
@@ -16,17 +16,28 @@ import {
 import React, { useContext, useEffect } from "react";
 import { FiEdit2, FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
 import { useHistory } from "react-router";
-import HeadingDashboard from "../../components/utils/HeadingDashboard";
-import TableSkeleton from "../../components/utils/TableSkeleton";
+import HeadingDashboardComponent from "../../components/dashboard/HeadingDashboardComponent";
+import TableSkeletonComponent from "../../components/dashboard/TableSkeletonComponent";
 import { rupiahFormat } from "../../Helper";
 import { noImageAvailable } from "../../Utils";
 import { CategoryContext } from "../category/CategoryContext";
 import { ProductContext } from "./ProductContext";
 
-const Index = () => {
+const ProductIndex = () => {
 	const history = useHistory();
 
-	const { loading, products, getProducts } = useContext(ProductContext);
+	const {
+		loading,
+		products,
+		getProducts,
+		filterCategory,
+		filterSearch,
+		filterSearchKeyword,
+		setFilterSearchKeyword,
+		filterSelectKeyword,
+		setFilterSelectKeyword,
+		deleteProduct,
+	} = useContext(ProductContext);
 	const { getCategories, categories } = useContext(CategoryContext);
 
 	useEffect(() => {
@@ -37,12 +48,12 @@ const Index = () => {
 	}, []);
 
 	if (loading) {
-		return <TableSkeleton />;
+		return <TableSkeletonComponent />;
 	} else {
 		return (
 			<>
 				{/* header */}
-				<HeadingDashboard
+				<HeadingDashboardComponent
 					title="Products"
 					button={{
 						title: "Add Product",
@@ -54,7 +65,15 @@ const Index = () => {
 				{/* table */}
 				<Box bg="white" borderRadius="lg" p="5" overflowX="scroll">
 					<Stack direction={["column", "row"]} mb={8}>
-						<Select placeholder="Choose Category" name="category_id">
+						<Select
+							placeholder="Choose Category"
+							name="category_id"
+							value={filterSelectKeyword}
+							onChange={(e) => {
+								setFilterSelectKeyword(e.target.value);
+								filterCategory(e.target.value);
+							}}
+						>
 							{categories.map((category) => (
 								<option value={category.id} key={category.id}>
 									{category.name}
@@ -62,7 +81,17 @@ const Index = () => {
 							))}
 						</Select>
 
-						<Input type="text" placeholder="Search" />
+						<Input
+							type="text"
+							placeholder="Search"
+							value={filterSearchKeyword}
+							onChange={(e) => setFilterSearchKeyword(e.target.value)}
+							onKeyPress={(e) => {
+								if (e.key === "Enter") {
+									filterSearch(e.target.value);
+								}
+							}}
+						/>
 					</Stack>
 					{/* </Flex> */}
 					<Table variant="simple">
@@ -74,6 +103,7 @@ const Index = () => {
 								<Th>Price</Th>
 								<Th>SKU</Th>
 								<Th>Image</Th>
+								<Th>Status</Th>
 								<Th w="100px">Action</Th>
 							</Tr>
 						</Thead>
@@ -92,6 +122,18 @@ const Index = () => {
 												maxWidth={100}
 											/>
 										}
+									</Td>
+									<Td>
+										<Badge
+											borderRadius="lg"
+											paddingEnd="2"
+											paddingStart="2"
+											colorScheme={
+												product.status === "active" ? "green" : "red"
+											}
+										>
+											{product.status}
+										</Badge>
 									</Td>
 									<Td>
 										<ButtonGroup variant="outline">
@@ -115,7 +157,11 @@ const Index = () => {
 											>
 												<Icon as={FiEdit2} />
 											</Button>
-											<Button colorScheme="red" size="sm">
+											<Button
+												colorScheme="red"
+												size="sm"
+												onClick={() => deleteProduct(product.id)}
+											>
 												<Icon as={FiTrash2} />
 											</Button>
 										</ButtonGroup>
@@ -131,4 +177,4 @@ const Index = () => {
 	}
 };
 
-export default Index;
+export default ProductIndex;

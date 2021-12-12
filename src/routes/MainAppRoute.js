@@ -1,11 +1,11 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router";
 import DashboardPage from "../pages/DashboardPage";
-import AuthPage from "../pages/AuthPage";
 import { serviceLocalStorage } from "../Helper";
 import { AuthProvider } from "../modules/auth/AuthContext";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 const MainAppRoute = () => {
 	return (
@@ -15,13 +15,13 @@ const MainAppRoute = () => {
 					{serviceLocalStorage("user_token") ? (
 						<Redirect to="/dashboard" />
 					) : (
-						<Redirect to="/auth/login" />
+						<Redirect to="/login" />
 					)}
 				</Route>
 				<Route path="/login" component={LoginPage} />
 				<Route path="/register" component={RegisterPage} />
-				<Route path="/auth/:type" component={AuthPage} />
 				<Route path="/dashboard" component={DashboardPage} />
+				<Route component={NotFoundPage} />
 			</Switch>
 		</AuthProvider>
 	);

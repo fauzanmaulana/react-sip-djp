@@ -6,8 +6,8 @@ import {
 	DrawerContent,
 	useDisclosure,
 } from "@chakra-ui/react";
-import Sidebar from "../components/utils/Sidebar";
-import MobileNav from "../components/utils/MobileNav";
+import SidebarComponent from "../components/dashboard/SidebarComponent";
+import NavbarComponent from "../components/dashboard/NavbarComponent";
 import { Route, Switch, useHistory } from "react-router";
 import DashboardPageRoute from "../routes/DashboardPageRoute";
 import { serviceLocalStorage } from "../Helper";
@@ -20,7 +20,7 @@ const Dashboard = () => {
 	const { getProfile } = useContext(AuthContext);
 
 	if (!serviceLocalStorage("user_token")) {
-		history.push("/auth/login");
+		history.push("/login");
 	}
 
 	useEffect(() => {
@@ -34,7 +34,7 @@ const Dashboard = () => {
 	return (
 		<>
 			<Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
-				<Sidebar
+				<SidebarComponent
 					onClose={() => onClose}
 					display={{ base: "none", md: "block" }}
 				/>
@@ -49,12 +49,12 @@ const Dashboard = () => {
 					size="full"
 				>
 					<DrawerContent>
-						<Sidebar onClose={onClose} />
+						<SidebarComponent onClose={onClose} />
 					</DrawerContent>
 				</Drawer>
 
 				{/* mobilenav */}
-				<MobileNav onOpen={onOpen} />
+				<NavbarComponent onOpen={onOpen} />
 
 				<Box ml={{ base: 0, md: 60 }} p="7">
 					{/* routes */}

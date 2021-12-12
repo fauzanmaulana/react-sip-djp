@@ -161,6 +161,7 @@ class Api {
 		return await response.json();
 	}
 
+	// * Delete Product Api (Delete)
 	static async deleteProduct(user_token, id) {
 		const response = await fetch(`${baseUrl}/product/${id}`, {
 			method: "DELETE",
@@ -168,6 +169,44 @@ class Api {
 				Accept: "application/json",
 				Authorization: `Bearer ${user_token}`,
 			}),
+		});
+		return await response.json();
+	}
+
+	// * Get Sales Api (GET)
+	static async getSales(user_token) {
+		const response = await fetch(`${baseUrl}/transaction/all`, {
+			method: "GET",
+			headers: new Headers({
+				Accept: "application/json",
+				Authorization: `Bearer ${user_token}`,
+			}),
+		});
+		return await response.json();
+	}
+
+	// * Get Sales Api (GET)
+	static async importSales(user_token, body) {
+		const response = await fetch(`${baseUrl}/transaction/import`, {
+			method: "POST",
+			headers: new Headers({
+				Accept: "application/json",
+				Authorization: `Bearer ${user_token}`,
+			}),
+			body: body,
+		});
+		return await response.json();
+	}
+
+	// * Get Sales Chart Api (GET)
+	static async getChartSales(user_token, body) {
+		const response = await fetch(`${baseUrl}/transaction/graph`, {
+			method: "GET",
+			headers: new Headers({
+				Accept: "application/json",
+				Authorization: `Bearer ${user_token}`,
+			}),
+			body: body,
 		});
 		return await response.json();
 	}

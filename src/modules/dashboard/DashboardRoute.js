@@ -1,11 +1,16 @@
 import { Route, Switch } from "react-router";
-import Index from "./Index";
+import NotFoundPage from "../../pages/NotFoundPage";
+import { SalesProvider } from "../sales/SalesContext";
+import DashboardIndex from "./DashboardIndex";
 
 const DashboardRoute = () => {
 	return (
-		<Switch>
-			<Route path="/dashboard" component={Index} />
-		</Switch>
+		<SalesProvider>
+			<Switch>
+				<Route exact path="/dashboard" component={DashboardIndex} />
+				<Route component={NotFoundPage} />
+			</Switch>
+		</SalesProvider>
 	);
 };
 
